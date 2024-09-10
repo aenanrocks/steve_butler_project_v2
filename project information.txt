@@ -1,0 +1,2033 @@
+### **Step 1: Setting Up the Development Environment**
+
+In this step, we will set up the development environment for both the backend (Django) and frontend (React) and configure PostgreSQL as the database. This will ensure that everything is in place for the project development.
+
+---
+
+#### **Step 1.1: Install Required Tools**
+
+We need to install some essential software on your Windows machine to get started:
+
+1. **Python**:
+   - Download and install the latest version of Python from [python.org](https://www.python.org/downloads/).
+   - Make sure to check the box that says **Add Python to PATH** during installation.
+
+2. **Node.js**:
+   - Download and install Node.js from [nodejs.org](https://nodejs.org/en/download/). This includes npm (Node Package Manager), which we'll use to manage JavaScript dependencies.
+
+3. **PostgreSQL**:
+   - Download and install PostgreSQL from [postgresql.org](https://www.postgresql.org/download/windows/).
+   - During installation, set a username and password for the PostgreSQL superuser (e.g., `postgres` as the user and a password you remember).
+   - Install **pgAdmin**, the GUI tool for managing your PostgreSQL databases.
+
+4. **Visual Studio Code** (optional but recommended):
+   - Install **VS Code** from [code.visualstudio.com](https://code.visualstudio.com/) to have a convenient IDE for writing and managing code.
+
+---
+
+#### **Step 1.2: Set Up the Backend (Django)**
+
+Now, let’s start by setting up the backend using Django.
+
+1. **Create a Virtual Environment**:
+   - Navigate to your project folder:
+     ```bash
+     cd path\to\steve_butler_project_v2
+     ```
+   - Create a virtual environment using **venv**:
+     ```bash
+     python -m venv venv
+     ```
+   - Activate the virtual environment:
+     - For **Windows**:
+       ```bash
+       venv\Scripts\activate
+       ```
+
+2. **Install Django and Django REST Framework**:
+   - Inside the activated virtual environment, install Django and the Django REST Framework (DRF):
+     ```bash
+     pip install django djangorestframework
+     ```
+
+3. **Create the Django Project**:
+   - Create the Django project (in this case, named `clinic_lab_backend`):
+     ```bash
+     django-admin startproject clinic_lab_backend
+     ```
+   - This will create the following directory structure:
+     ```
+     steve_butler_project_v2/
+     └── clinic_lab_backend/
+         ├── clinic_lab_backend/
+         │   ├── __init__.py
+         │   ├── asgi.py
+         │   ├── settings.py
+         │   ├── urls.py
+         │   └── wsgi.py
+         └── manage.py
+     ```
+
+4. **Install PostgreSQL Adapter**:
+   - Install `psycopg2`, which is the PostgreSQL adapter for Django:
+     ```bash
+     pip install psycopg2
+     ```
+
+5. **Configure PostgreSQL in Django**:
+   - Open `clinic_lab_backend/settings.py` and configure the database settings to use PostgreSQL. Update the `DATABASES` section:
+     ```python
+     DATABASES = {
+         'default': {
+             'ENGINE': 'django.db.backends.postgresql',
+             'NAME': 'clinic_lab_db',
+             'USER': 'your_postgres_username',
+             'PASSWORD': 'your_postgres_password',
+             'HOST': 'localhost',
+             'PORT': '5432',
+         }
+     }
+     ```
+
+6. **Create the PostgreSQL Database**:
+   - Open **pgAdmin** (or use the PostgreSQL command line) and create a database named `clinic_lab_db`:
+     ```sql
+     CREATE DATABASE clinic_lab_db;
+     ```
+
+7. **Run Migrations**:
+   - Migrate the database schema:
+     ```bash
+     python manage.py migrate
+     ```
+
+8. **Create a Superuser**:
+   - Create a superuser for the Django admin interface:
+     ```bash
+     python manage.py createsuperuser
+     ```
+
+9. **Start the Django Development Server**:
+   - Start the Django development server to verify everything works:
+     ```bash
+     python manage.py runserver
+     ```
+   - Visit `http://127.0.0.1:8000/` in your browser, and you should see the default Django welcome page.
+
+---
+
+#### **Step 1.3: Set Up the Frontend (React)**
+
+Now, let’s set up the React frontend.
+
+1. **Create React App**:
+   - Navigate to your `steve_butler_project_v2` folder in another terminal:
+     ```bash
+     cd path\to\steve_butler_project_v2
+     ```
+   - Run the following command to create a new React app called `clinic_lab_frontend`:
+     ```bash
+     npx create-react-app clinic_lab_frontend
+     ```
+   - This will generate a basic React project structure:
+     ```
+     steve_butler_project_v2/
+     ├── clinic_lab_backend/
+     └── clinic_lab_frontend/
+         ├── public/
+         ├── src/
+         ├── package.json
+         └── ...
+     ```
+
+2. **Install Axios and React Router**:
+   - In the React project folder, install **Axios** for making HTTP requests and **React Router** for navigation:
+     ```bash
+     cd clinic_lab_frontend
+     npm install axios react-router-dom
+     ```
+
+3. **Run the React Development Server**:
+   - Start the React development server to verify everything is working:
+     ```bash
+     npm start
+     ```
+   - Visit `http://localhost:3000/` in your browser, and you should see the default React welcome page.
+
+---
+
+### **Files Created in Step 1**:
+
+1. **Backend (Django)**:
+   - `steve_butler_project_v2/clinic_lab_backend/`
+     - `manage.py`: The entry point for managing Django commands.
+     - `clinic_lab_backend/`
+       - `__init__.py`: Initializes the Django project as a Python package.
+       - `settings.py`: Configuration file where database settings, installed apps, etc., are defined.
+       - `urls.py`: Defines the URL routing for the project.
+       - `asgi.py`: For asynchronous server gateway interface (optional for now).
+       - `wsgi.py`: For running Django applications in a WSGI-compatible server.
+   
+2. **Frontend (React)**:
+   - `steve_butler_project_v2/clinic_lab_frontend/`
+     - `public/`: Contains the public files like the HTML template.
+     - `src/`: Contains the React components and logic.
+     - `package.json`: Stores the metadata and dependencies for the React app.
+
+---
+
+With the development environment set up, your **"steve_butler_project_v2"** folder now contains both the Django backend and the React frontend. The backend will use PostgreSQL for data storage, and the frontend will use Axios to communicate with the backend.
+
+---
+
+
+
+### **Step 2: Design the Database Models**
+
+In this step, we will define and create the core database models that will power the **Clinic-Lab Order Management System**. These models represent the structure of the data we will store in the PostgreSQL database.
+
+#### **Overview of Models**:
+1. **User**: Stores information about the clinics and labs. Django’s default `User` model will be extended for this purpose.
+2. **Order**: Represents a lab order created by a clinic, including its status, delivery method, and any notes.
+3. **Order Status**: Tracks the different statuses an order can go through (e.g., Submitted, In Progress, On Hold, Completed).
+4. **Notification**: Stores notifications that are sent to users (clinics and labs) about changes to orders.
+
+---
+
+### **Step 2.1: Extend Django’s User Model**
+
+Django comes with a default `User` model, but we will extend it to store additional details about clinics and labs.
+
+1. **Create a `models.py` file for the `accounts` app**:
+   - First, create an app called `accounts` that will manage user-related functionality:
+     ```bash
+     python manage.py startapp accounts
+     ```
+   - Add this app to `INSTALLED_APPS` in `clinic_lab_backend/settings.py`:
+     ```python
+     INSTALLED_APPS = [
+         # other apps
+         'accounts',
+     ]
+     ```
+
+2. **Extend the User Model**:
+   - In `accounts/models.py`, extend Django’s built-in `User` model by using a `Profile` model that adds roles for clinics and labs:
+   ```python
+   from django.db import models
+   from django.contrib.auth.models import User
+
+   class Profile(models.Model):
+       USER_TYPE_CHOICES = (
+           ('clinic', 'Clinic'),
+           ('lab', 'Lab'),
+       )
+       user = models.OneToOneField(User, on_delete=models.CASCADE)
+       user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
+
+       def __str__(self):
+           return self.user.username
+   ```
+
+3. **Signals for Creating/Updating Profile**:
+   - Use Django signals to automatically create a profile whenever a `User` object is created:
+   ```python
+   from django.db.models.signals import post_save
+   from django.dispatch import receiver
+   from django.contrib.auth.models import User
+   from .models import Profile
+
+   @receiver(post_save, sender=User)
+   def create_user_profile(sender, instance, created, **kwargs):
+       if created:
+           Profile.objects.create(user=instance)
+
+   @receiver(post_save, sender=User)
+   def save_user_profile(sender, instance, **kwargs):
+       instance.profile.save()
+   ```
+
+---
+
+### **Step 2.2: Define the Order Model**
+
+The `Order` model will track all lab orders. Each order will include fields like the status, delivery method, and any notes from the clinic.
+
+1. **Create the Order Model**:
+   - In the same `models.py`, define the `Order` model:
+   ```python
+   class Order(models.Model):
+       STATUS_CHOICES = (
+           ('submitted', 'Submitted'),
+           ('pending_review', 'Pending Review'),
+           ('in_progress', 'In Progress'),
+           ('on_hold', 'On Hold'),
+           ('completed', 'Completed'),
+           ('delivered', 'Delivered'),
+           ('cancelled', 'Cancelled'),
+       )
+       DELIVERY_CHOICES = (
+           ('pickup', 'Pickup'),
+           ('email', 'Email'),
+           ('post', 'Post'),
+       )
+       
+       clinic = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+       lab = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lab_orders')
+       status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='submitted')
+       delivery_method = models.CharField(max_length=10, choices=DELIVERY_CHOICES, default='email')
+       notes = models.TextField(blank=True)
+       created_at = models.DateTimeField(auto_now_add=True)
+       updated_at = models.DateTimeField(auto_now=True)
+
+       def __str__(self):
+           return f"Order {self.id} - {self.status}"
+   ```
+
+2. **Order Fields Explained**:
+   - **clinic**: The clinic that created the order (foreign key to the User model).
+   - **lab**: The lab processing the order (foreign key to the User model).
+   - **status**: Tracks the current status of the order (submitted, in progress, on hold, etc.).
+   - **delivery_method**: Specifies how the results will be delivered (email, post, pickup).
+   - **notes**: Optional field for clinics to provide additional instructions or information.
+   - **created_at** and **updated_at**: Timestamps for when the order was created and last updated.
+
+---
+
+### **Step 2.3: Create the Notification Model**
+
+The `Notification` model will store events related to changes in order status, which will trigger notifications to users.
+
+1. **Define the Notification Model**:
+   - In `models.py`, define the `Notification` model:
+   ```python
+   class Notification(models.Model):
+       recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+       message = models.CharField(max_length=255)
+       created_at = models.DateTimeField(auto_now_add=True)
+       is_read = models.BooleanField(default=False)
+
+       def __str__(self):
+           return f"Notification for {self.recipient.username} - {self.message}"
+   ```
+
+2. **Notification Fields Explained**:
+   - **recipient**: The user (clinic or lab) receiving the notification.
+   - **message**: The content of the notification (e.g., "Your order has been updated to 'Completed'").
+   - **created_at**: The timestamp for when the notification was created.
+   - **is_read**: Boolean field to track if the notification has been viewed.
+
+---
+
+### **Step 2.4: Migrate the Database**
+
+Once the models are created, we need to generate and apply the migrations to create the necessary database tables.
+
+1. **Generate Migrations**:
+   - Run the following command to generate migration files for the new models:
+     ```bash
+     python manage.py makemigrations accounts
+     ```
+
+2. **Apply Migrations**:
+   - Apply the migrations to create the new database tables:
+     ```bash
+     python manage.py migrate
+     ```
+
+---
+
+### **Step 2.5: Admin Interface**
+
+To manage the data through Django's built-in admin interface, we need to register the models.
+
+1. **Register Models in Admin**:
+   - In `accounts/admin.py`, register the `Profile`, `Order`, and `Notification` models:
+   ```python
+   from django.contrib import admin
+   from .models import Profile, Order, Notification
+
+   admin.site.register(Profile)
+   admin.site.register(Order)
+   admin.site.register(Notification)
+   ```
+
+2. **Access the Admin Interface**:
+   - Start the development server:
+     ```bash
+     python manage.py runserver
+     ```
+   - Visit `http://127.0.0.1:8000/admin/`, log in with the superuser account, and you should now see and manage the `Profile`, `Order`, and `Notification` models.
+
+---
+
+### **Files Created in Step 2**:
+
+1. **Backend (Django)**:
+   - `steve_butler_project_v2/clinic_lab_backend/accounts/`
+     - `models.py`: Contains the `Profile`, `Order`, and `Notification` models.
+     - `admin.py`: Registers the models in the admin interface.
+     - `apps.py`: Auto-generated app configuration file for the `accounts` app.
+     - `migrations/`: Directory containing migration files for database schema changes.
+       - Example migration file: `0001_initial.py` (generated automatically).
+
+2. **Database Changes (PostgreSQL)**:
+   - Tables created in PostgreSQL:
+     - `accounts_profile`: Stores user profile information (role: clinic or lab).
+     - `accounts_order`: Stores orders created by clinics and processed by labs.
+     - `accounts_notification`: Stores notifications for clinics and labs.
+
+---
+
+
+### **Step 3: Backend Development with Django REST Framework**
+
+In this step, we will build the backend API using **Django REST Framework (DRF)** to manage orders, notifications, and authentication. This will allow the React frontend to interact with the backend to create, update, and fetch data.
+
+---
+
+### **Step 3.1: Set Up Django REST Framework**
+
+1. **Ensure DRF is Installed**:
+   If you haven't already installed Django REST Framework, make sure to install it:
+   ```bash
+   pip install djangorestframework
+   ```
+
+2. **Update `settings.py`**:
+   - Add `'rest_framework'` to `INSTALLED_APPS` in `clinic_lab_backend/settings.py`:
+   ```python
+   INSTALLED_APPS = [
+       # other apps
+       'rest_framework',
+       'accounts',
+   ]
+   ```
+
+3. **Basic DRF Configuration**:
+   - You can configure some global settings for DRF (optional but recommended for large projects):
+   ```python
+   REST_FRAMEWORK = {
+       'DEFAULT_AUTHENTICATION_CLASSES': (
+           'rest_framework_simplejwt.authentication.JWTAuthentication',
+       ),
+       'DEFAULT_PERMISSION_CLASSES': (
+           'rest_framework.permissions.IsAuthenticated',
+       ),
+   }
+   ```
+
+This configuration ensures that JWT authentication will be used, and the API will require users to be authenticated by default.
+
+---
+
+### **Step 3.2: Build Authentication with JWT (JSON Web Tokens)**
+
+We will use **JWT** for authentication. JWT allows secure, stateless authentication, where a token is sent with each request.
+
+1. **Install JWT Authentication**:
+   - Install the `Simple JWT` package to handle JWT tokens in DRF:
+     ```bash
+     pip install djangorestframework-simplejwt
+     ```
+
+2. **Add JWT Authentication to DRF**:
+   - In `clinic_lab_backend/settings.py`, ensure JWT authentication is included in your `REST_FRAMEWORK` settings (as shown earlier).
+
+3. **Create Views for Login and Register**:
+   - In `accounts/views.py`, create API views for user registration and login using DRF.
+
+4. **Create Serializer for User Registration**:
+   - In `accounts/serializers.py`, add a serializer for creating new users:
+     ```python
+     from rest_framework import serializers
+     from django.contrib.auth.models import User
+     from .models import Profile
+
+     class UserSerializer(serializers.ModelSerializer):
+         class Meta:
+             model = User
+             fields = ['username', 'email', 'password']
+             extra_kwargs = {'password': {'write_only': True}}
+
+         def create(self, validated_data):
+             user = User(
+                 username=validated_data['username'],
+                 email=validated_data['email'],
+             )
+             user.set_password(validated_data['password'])
+             user.save()
+             Profile.objects.create(user=user, user_type='clinic')  # Default user type is clinic
+             return user
+     ```
+
+5. **Create API Views for Registration**:
+   - In `accounts/views.py`, add the registration view:
+     ```python
+     from rest_framework import generics
+     from .serializers import UserSerializer
+
+     class RegisterView(generics.CreateAPIView):
+         serializer_class = UserSerializer
+     ```
+
+6. **Set Up URLs for Authentication**:
+   - In `clinic_lab_backend/urls.py`, include the authentication URLs:
+     ```python
+     from django.urls import path
+     from accounts.views import RegisterView
+     from rest_framework_simplejwt.views import (
+         TokenObtainPairView,
+         TokenRefreshView,
+     )
+
+     urlpatterns = [
+         # Register and JWT endpoints
+         path('api/auth/register/', RegisterView.as_view(), name='register'),
+         path('api/auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+         path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+     ]
+     ```
+
+7. **Test JWT Authentication**:
+   - Now, you can register a new user by sending a POST request to `/api/auth/register/` and login using `/api/auth/login/`.
+   - Upon login, you will receive an access token and a refresh token.
+
+---
+
+### **Step 3.3: Build API for Order Management**
+
+Next, we'll create the API endpoints for order creation, modification, and retrieval.
+
+1. **Create a Serializer for Orders**:
+   - In `accounts/serializers.py`, add a serializer for the `Order` model:
+     ```python
+     from .models import Order
+
+     class OrderSerializer(serializers.ModelSerializer):
+         class Meta:
+             model = Order
+             fields = ['id', 'clinic', 'lab', 'status', 'delivery_method', 'notes', 'created_at', 'updated_at']
+             read_only_fields = ['clinic', 'created_at', 'updated_at']
+     ```
+
+2. **Create Order Views**:
+   - In `accounts/views.py`, add API views for order management:
+     ```python
+     from rest_framework import viewsets
+     from rest_framework.permissions import IsAuthenticated
+     from .models import Order
+     from .serializers import OrderSerializer
+
+     class OrderViewSet(viewsets.ModelViewSet):
+         queryset = Order.objects.all()
+         serializer_class = OrderSerializer
+         permission_classes = [IsAuthenticated]
+
+         def perform_create(self, serializer):
+             serializer.save(clinic=self.request.user)
+     ```
+
+   - This view will handle:
+     - **GET**: List all orders.
+     - **POST**: Create a new order.
+     - **PUT/PATCH**: Update an existing order.
+
+3. **Set Up URLs for Orders**:
+   - In `clinic_lab_backend/urls.py`, include the order API routes:
+     ```python
+     from rest_framework.routers import DefaultRouter
+     from accounts.views import OrderViewSet
+
+     router = DefaultRouter()
+     router.register(r'api/orders', OrderViewSet, basename='order')
+
+     urlpatterns += router.urls
+     ```
+
+   - This automatically generates the necessary routes for managing orders (e.g., `/api/orders/`, `/api/orders/<id>/`).
+
+---
+
+### **Step 3.4: Build API for Notifications**
+
+Now, we'll create an API for handling notifications sent to clinics and labs when an order is updated.
+
+1. **Create a Serializer for Notifications**:
+   - In `accounts/serializers.py`, add the `NotificationSerializer`:
+     ```python
+     from .models import Notification
+
+     class NotificationSerializer(serializers.ModelSerializer):
+         class Meta:
+             model = Notification
+             fields = ['id', 'recipient', 'message', 'created_at', 'is_read']
+             read_only_fields = ['recipient', 'created_at']
+     ```
+
+2. **Create Notification Views**:
+   - In `accounts/views.py`, add a view for listing notifications:
+     ```python
+     from rest_framework import generics
+     from .models import Notification
+     from .serializers import NotificationSerializer
+
+     class NotificationListView(generics.ListAPIView):
+         serializer_class = NotificationSerializer
+         permission_classes = [IsAuthenticated]
+
+         def get_queryset(self):
+             return Notification.objects.filter(recipient=self.request.user)
+     ```
+
+3. **Set Up URLs for Notifications**:
+   - In `clinic_lab_backend/urls.py`, add the notification API route:
+     ```python
+     from accounts.views import NotificationListView
+
+     urlpatterns += [
+         path('api/notifications/', NotificationListView.as_view(), name='notifications'),
+     ]
+     ```
+
+   - This creates an endpoint (`/api/notifications/`) for clinics and labs to fetch their notifications.
+
+---
+
+### **Step 3.5: Testing the API**
+
+After completing the API development, it's time to test the endpoints using a tool like **Postman** or **curl**. Here's what you can do:
+
+1. **Test User Registration and Login**:
+   - Send a `POST` request to `/api/auth/register/` to create a new clinic or lab user.
+   - Send a `POST` request to `/api/auth/login/` to get an authentication token.
+
+2. **Test Order Creation**:
+   - After logging in and obtaining the token, send a `POST` request to `/api/orders/` to create a new order.
+
+3. **Test Notifications**:
+   - Send a `GET` request to `/api/notifications/` to fetch all notifications for the logged-in user.
+
+---
+
+### **Files Created in Step 3**:
+
+1. **Backend (Django)**:
+   - **Serializers**:
+     - `steve_butler_project_v2/clinic_lab_backend/accounts/serializers.py`: Contains serializers for `User`, `Order`, and `Notification`.
+   - **Views**:
+     - `steve_butler_project_v2/clinic_lab_backend/accounts/views.py`: Contains API views for authentication, orders, and notifications.
+   - **URLs**:
+     - `steve_butler_project_v2/clinic_lab_backend/clinic_lab_backend/urls.py`: Contains the URL routes for the API endpoints (auth, orders, notifications).
+
+---
+
+
+### **Step 4: Frontend Development with React**
+
+In this step, we will build the user interface for the **Clinic-Lab Order Management System** using **React**. We’ll create components to handle the login, order management (viewing, creating, and modifying orders), and notifications. We'll also set up **Axios** to connect the frontend with the Django backend API we built in the previous step.
+
+---
+
+### **Step 4.1: Set Up React Project Structure**
+
+1. **Navigate to the React Project**:
+   - In your terminal, navigate to the `clinic_lab_frontend` folder inside your `steve_butler_project_v2` project:
+     ```bash
+     cd steve_butler_project_v2/clinic_lab_frontend
+     ```
+
+2. **Install Axios and React Router**:
+   - Install **Axios** (for making HTTP requests) and **React Router** (for routing):
+     ```bash
+     npm install axios react-router-dom
+     ```
+
+3. **Set Up Routing**:
+   - In `src/`, create a file named `AppRouter.js` to define the routes for different views (login, dashboard, notifications, etc.):
+     ```javascript
+     import React from 'react';
+     import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+     import Login from './components/Login';
+     import Dashboard from './components/Dashboard';
+     import Notifications from './components/Notifications';
+     import OrderForm from './components/OrderForm';
+
+     const AppRouter = () => (
+         <Router>
+             <Switch>
+                 <Route path="/login" component={Login} />
+                 <Route path="/dashboard" component={Dashboard} />
+                 <Route path="/notifications" component={Notifications} />
+                 <Route path="/orders/new" component={OrderForm} />
+             </Switch>
+         </Router>
+     );
+
+     export default AppRouter;
+     ```
+
+4. **Update `App.js`**:
+   - Modify `src/App.js` to use the router:
+     ```javascript
+     import React from 'react';
+     import AppRouter from './AppRouter';
+
+     const App = () => {
+         return (
+             <div>
+                 <AppRouter />
+             </div>
+         );
+     };
+
+     export default App;
+     ```
+
+---
+
+### **Step 4.2: Build the Login Component**
+
+1. **Create the Login Component**:
+   - Create a new folder called `components` inside the `src/` directory, and create a file named `Login.js`:
+     ```javascript
+     import React, { useState } from 'react';
+     import axios from 'axios';
+     import { useHistory } from 'react-router-dom';
+
+     const Login = () => {
+         const [username, setUsername] = useState('');
+         const [password, setPassword] = useState('');
+         const history = useHistory();
+
+         const handleLogin = async (e) => {
+             e.preventDefault();
+             try {
+                 const response = await axios.post('http://localhost:8000/api/auth/login/', {
+                     username,
+                     password,
+                 });
+                 localStorage.setItem('access_token', response.data.access);
+                 localStorage.setItem('refresh_token', response.data.refresh);
+                 history.push('/dashboard');
+             } catch (error) {
+                 console.error('Login failed', error);
+             }
+         };
+
+         return (
+             <div>
+                 <h2>Login</h2>
+                 <form onSubmit={handleLogin}>
+                     <div>
+                         <label>Username</label>
+                         <input
+                             type="text"
+                             value={username}
+                             onChange={(e) => setUsername(e.target.value)}
+                         />
+                     </div>
+                     <div>
+                         <label>Password</label>
+                         <input
+                             type="password"
+                             value={password}
+                             onChange={(e) => setPassword(e.target.value)}
+                         />
+                     </div>
+                     <button type="submit">Login</button>
+                 </form>
+             </div>
+         );
+     };
+
+     export default Login;
+     ```
+
+2. **Functionality**:
+   - The `Login` component captures the username and password, sends them to the backend using Axios, and stores the JWT token in `localStorage` on success.
+   - Upon successful login, the user is redirected to the dashboard.
+
+---
+
+### **Step 4.3: Build the Order Dashboard Component**
+
+1. **Create the Dashboard Component**:
+   - In `components/`, create a new file named `Dashboard.js`:
+     ```javascript
+     import React, { useEffect, useState } from 'react';
+     import axios from 'axios';
+
+     const Dashboard = () => {
+         const [orders, setOrders] = useState([]);
+
+         useEffect(() => {
+             const fetchOrders = async () => {
+                 try {
+                     const response = await axios.get('http://localhost:8000/api/orders/', {
+                         headers: {
+                             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                         },
+                     });
+                     setOrders(response.data);
+                 } catch (error) {
+                     console.error('Error fetching orders', error);
+                 }
+             };
+             fetchOrders();
+         }, []);
+
+         return (
+             <div>
+                 <h2>Order Dashboard</h2>
+                 <table>
+                     <thead>
+                         <tr>
+                             <th>ID</th>
+                             <th>Status</th>
+                             <th>Delivery Method</th>
+                             <th>Created At</th>
+                         </tr>
+                     </thead>
+                     <tbody>
+                         {orders.map((order) => (
+                             <tr key={order.id}>
+                                 <td>{order.id}</td>
+                                 <td>{order.status}</td>
+                                 <td>{order.delivery_method}</td>
+                                 <td>{order.created_at}</td>
+                             </tr>
+                         ))}
+                     </tbody>
+                 </table>
+             </div>
+         );
+     };
+
+     export default Dashboard;
+     ```
+
+2. **Functionality**:
+   - The `Dashboard` component fetches a list of orders from the backend using Axios and displays them in a table.
+   - The JWT token stored in `localStorage` is sent with the request for authentication.
+
+---
+
+### **Step 4.4: Build the Order Form Component**
+
+1. **Create the Order Form Component**:
+   - In `components/`, create a new file named `OrderForm.js`:
+     ```javascript
+     import React, { useState } from 'react';
+     import axios from 'axios';
+
+     const OrderForm = () => {
+         const [deliveryMethod, setDeliveryMethod] = useState('email');
+         const [notes, setNotes] = useState('');
+
+         const handleSubmit = async (e) => {
+             e.preventDefault();
+             try {
+                 await axios.post('http://localhost:8000/api/orders/', {
+                     delivery_method: deliveryMethod,
+                     notes,
+                 }, {
+                     headers: {
+                         Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                     },
+                 });
+                 alert('Order created successfully');
+             } catch (error) {
+                 console.error('Error creating order', error);
+             }
+         };
+
+         return (
+             <div>
+                 <h2>Create New Order</h2>
+                 <form onSubmit={handleSubmit}>
+                     <div>
+                         <label>Delivery Method</label>
+                         <select
+                             value={deliveryMethod}
+                             onChange={(e) => setDeliveryMethod(e.target.value)}
+                         >
+                             <option value="email">Email</option>
+                             <option value="post">Post</option>
+                             <option value="pickup">Pickup</option>
+                         </select>
+                     </div>
+                     <div>
+                         <label>Notes</label>
+                         <textarea
+                             value={notes}
+                             onChange={(e) => setNotes(e.target.value)}
+                         />
+                     </div>
+                     <button type="submit">Submit Order</button>
+                 </form>
+             </div>
+         );
+     };
+
+     export default OrderForm;
+     ```
+
+2. **Functionality**:
+   - The `OrderForm` component allows clinics to create a new order by submitting the delivery method and notes.
+   - It sends a POST request to the backend API, including the JWT token for authentication.
+
+---
+
+### **Step 4.5: Build the Notifications Component**
+
+1. **Create the Notifications Component**:
+   - In `components/`, create a new file named `Notifications.js`:
+     ```javascript
+     import React, { useEffect, useState } from 'react';
+     import axios from 'axios';
+
+     const Notifications = () => {
+         const [notifications, setNotifications] = useState([]);
+
+         useEffect(() => {
+             const fetchNotifications = async () => {
+                 try {
+                     const response = await axios.get('http://localhost:8000/api/notifications/', {
+                         headers: {
+                             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                         },
+                     });
+                     setNotifications(response.data);
+                 } catch (error) {
+                     console.error('Error fetching notifications', error);
+                 }
+             };
+             fetchNotifications();
+         }, []);
+
+         return (
+             <div>
+                 <h2>Notifications</h2>
+                 <ul>
+                     {notifications.map((notification) => (
+                         <li key={notification.id}>
+                             {notification.message} - {new Date(notification.created_at).toLocaleString()}
+                         </li>
+                     ))}
+                 </ul>
+             </div>
+         );
+     };
+
+     export default Notifications;
+     ```
+
+2. **Functionality**:
+   - The `Notifications` component fetches notifications from the backend and displays them in a list.
+   - The JWT token is sent in the request for authentication.
+
+---
+
+### **Step 4.6: Test the Frontend**
+
+1. **Start the React Development Server**:
+   - Run the
+
+ following command in the `clinic_lab_frontend` directory:
+     ```bash
+     npm start
+     ```
+
+2. **Navigate through the App**:
+   - Visit `http://localhost:3000/login` to log in.
+   - After logging in, visit the dashboard to view orders, create new orders, and view notifications.
+
+---
+
+### **Files Created in Step 4**:
+
+1. **Frontend (React)**:
+   - `steve_butler_project_v2/clinic_lab_frontend/src/`
+     - `components/Login.js`: Login form for user authentication.
+     - `components/Dashboard.js`: Displays a list of orders for clinics and labs.
+     - `components/OrderForm.js`: Form to create new orders.
+     - `components/Notifications.js`: Displays notifications for clinics and labs.
+     - `AppRouter.js`: Handles the routing for different views in the app.
+     - `App.js`: Main app file connecting the router.
+
+---
+
+### **Step 5: Implement Real-Time Notifications with Django Channels**
+
+In this step, we will implement **real-time notifications** using **Django Channels** and **WebSockets**. This will allow clinics and labs to receive notifications in real-time, without needing to refresh the page.
+
+### **Step 5.1: Install Django Channels**
+
+1. **Install Channels**:
+   - Navigate to your backend project directory:
+     ```bash
+     cd steve_butler_project_v2/clinic_lab_backend
+     ```
+   - Install **Django Channels** and **channels-redis** (for Redis-based message handling):
+     ```bash
+     pip install channels channels-redis
+     ```
+
+2. **Configure Channels in Django**:
+   - In your `clinic_lab_backend/settings.py`, update the settings to use **ASGI** (Asynchronous Server Gateway Interface) and configure Channels:
+     ```python
+     # Add ASGI application configuration
+     ASGI_APPLICATION = 'clinic_lab_backend.asgi.application'
+
+     # Redis Channel layer for real-time notifications
+     CHANNEL_LAYERS = {
+         'default': {
+             'BACKEND': 'channels_redis.core.RedisChannelLayer',
+             'CONFIG': {
+                 'hosts': [('127.0.0.1', 6379)],  # Default Redis port
+             },
+         },
+     }
+     ```
+
+3. **Update ASGI Configuration**:
+   - In the `clinic_lab_backend` directory, create a file named `asgi.py`:
+     ```python
+     import os
+     from channels.auth import AuthMiddlewareStack
+     from channels.routing import ProtocolTypeRouter, URLRouter
+     from django.core.asgi import get_asgi_application
+     import accounts.routing  # Import your app's routing configuration
+
+     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'clinic_lab_backend.settings')
+
+     application = ProtocolTypeRouter({
+         "http": get_asgi_application(),
+         "websocket": AuthMiddlewareStack(
+             URLRouter(
+                 accounts.routing.websocket_urlpatterns  # WebSocket URLs
+             )
+         ),
+     })
+     ```
+
+4. **Set Up Redis**:
+   - Ensure that Redis is installed and running on your machine. If Redis is not installed, download it from [Redis Download](https://redis.io/download) and start the Redis server.
+     ```bash
+     redis-server
+     ```
+
+---
+
+### **Step 5.2: Set Up WebSocket Routing**
+
+1. **Create a `routing.py` File for WebSockets**:
+   - In your `accounts` app, create a `routing.py` file:
+     ```bash
+     touch accounts/routing.py
+     ```
+   - Define WebSocket URL patterns in `routing.py`:
+     ```python
+     from django.urls import re_path
+     from . import consumers
+
+     websocket_urlpatterns = [
+         re_path(r'ws/notifications/$', consumers.NotificationConsumer.as_asgi()),
+     ]
+     ```
+
+---
+
+### **Step 5.3: Build the Notification Consumer**
+
+1. **Create the WebSocket Consumer**:
+   - In `accounts/`, create a file named `consumers.py`:
+     ```bash
+     touch accounts/consumers.py
+     ```
+   - Define the `NotificationConsumer` to handle WebSocket connections:
+     ```python
+     import json
+     from channels.generic.websocket import AsyncWebsocketConsumer
+
+     class NotificationConsumer(AsyncWebsocketConsumer):
+         async def connect(self):
+             self.user = self.scope['user']
+             if self.user.is_authenticated:
+                 # Use the user ID as the unique group name
+                 self.group_name = f"user_{self.user.id}"
+
+                 # Join user-specific group
+                 await self.channel_layer.group_add(self.group_name, self.channel_name)
+
+                 # Accept WebSocket connection
+                 await self.accept()
+             else:
+                 # Reject the connection if the user is not authenticated
+                 await self.close()
+
+         async def disconnect(self, close_code):
+             # Leave the user-specific group on disconnect
+             await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
+         # Receive notification from the group
+         async def receive(self, text_data):
+             text_data_json = json.loads(text_data)
+             notification_message = text_data_json['message']
+
+             # Send the message back to WebSocket client
+             await self.send(text_data=json.dumps({
+                 'message': notification_message
+             }))
+
+         # Send notifications to the WebSocket
+         async def send_notification(self, event):
+             notification_message = event['message']
+
+             # Send the message to WebSocket client
+             await self.send(text_data=json.dumps({
+                 'message': notification_message
+             }))
+     ```
+
+2. **Explanation**:
+   - **connect()**: This method is called when the WebSocket connection is opened. If the user is authenticated, they are added to a user-specific group.
+   - **disconnect()**: Called when the WebSocket connection is closed. The user is removed from the group.
+   - **send_notification()**: This method sends the notification message back to the WebSocket client.
+
+---
+
+### **Step 5.4: Trigger WebSocket Notifications**
+
+Now, we need to trigger notifications when an order status is updated.
+
+1. **Update the Order Serializer to Trigger Notifications**:
+   - In `accounts/serializers.py`, update the `OrderSerializer` to send notifications through WebSocket when the order status is updated:
+     ```python
+     from asgiref.sync import async_to_sync
+     from channels.layers import get_channel_layer
+
+     class OrderSerializer(serializers.ModelSerializer):
+         class Meta:
+             model = Order
+             fields = ['id', 'clinic', 'lab', 'status', 'delivery_method', 'notes', 'created_at', 'updated_at']
+             read_only_fields = ['clinic', 'created_at', 'updated_at']
+
+         def update(self, instance, validated_data):
+             # Update the order
+             instance = super().update(instance, validated_data)
+
+             # Notify the clinic about the order status update
+             channel_layer = get_channel_layer()
+             notification_message = f"Order {instance.id} updated to {instance.status}"
+
+             # Send the notification to the user group (clinic or lab)
+             async_to_sync(channel_layer.group_send)(
+                 f"user_{instance.clinic.id}",  # Send to the clinic's group
+                 {
+                     'type': 'send_notification',
+                     'message': notification_message
+                 }
+             )
+             return instance
+     ```
+
+2. **Explanation**:
+   - When an order is updated, the `update()` method triggers a notification that is sent to the user's WebSocket group using `group_send()`.
+
+---
+
+### **Step 5.5: Connect the React Frontend to WebSocket**
+
+Now, we will connect the React frontend to the WebSocket to receive real-time notifications.
+
+1. **Update the Notifications Component**:
+   - In `clinic_lab_frontend/src/components/Notifications.js`, update the `Notifications` component to listen for WebSocket events:
+     ```javascript
+     import React, { useEffect, useState } from 'react';
+     import axios from 'axios';
+
+     const Notifications = () => {
+         const [notifications, setNotifications] = useState([]);
+
+         useEffect(() => {
+             // Fetch notifications from the backend
+             const fetchNotifications = async () => {
+                 try {
+                     const response = await axios.get('http://localhost:8000/api/notifications/', {
+                         headers: {
+                             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                         },
+                     });
+                     setNotifications(response.data);
+                 } catch (error) {
+                     console.error('Error fetching notifications', error);
+                 }
+             };
+             fetchNotifications();
+
+             // Connect to WebSocket
+             const socket = new WebSocket('ws://localhost:8000/ws/notifications/');
+
+             // Listen for WebSocket messages
+             socket.onmessage = (event) => {
+                 const data = JSON.parse(event.data);
+                 setNotifications((prevNotifications) => [
+                     ...prevNotifications,
+                     { message: data.message, created_at: new Date().toLocaleString() },
+                 ]);
+             };
+
+             // Clean up WebSocket connection on component unmount
+             return () => socket.close();
+         }, []);
+
+         return (
+             <div>
+                 <h2>Notifications</h2>
+                 <ul>
+                     {notifications.map((notification, index) => (
+                         <li key={index}>
+                             {notification.message} - {notification.created_at}
+                         </li>
+                     ))}
+                 </ul>
+             </div>
+         );
+     };
+
+     export default Notifications;
+     ```
+
+2. **Explanation**:
+   - The `Notifications` component fetches notifications from the backend on component load.
+   - It establishes a WebSocket connection to listen for real-time updates.
+   - When a message is received from the WebSocket, it updates the state with the new notification.
+
+---
+
+### **Step 5.6: Test Real-Time Notifications**
+
+1. **Start the Django Development Server**:
+   - Ensure Redis is running and start the Django server:
+     ```bash
+     python manage.py runserver
+     ```
+
+2. **Start the React Development Server**:
+   - Start the React frontend:
+     ```bash
+     npm start
+     ```
+
+3. **Test WebSocket Notifications**:
+   - Log in as a clinic user, open the **Notifications** page, and keep it open.
+   - From the Django admin or the API, update the status of an order. The clinic should receive a real-time notification without refreshing the page.
+
+---
+
+### **Files Created/Modified in Step 5**:
+
+1. **Backend (Django)**:
+   - **Channels Setup**:
+     - `steve_butler_project_v2/clinic_lab_backend/asgi.py`: Configures ASGI for Django Channels.
+     - `steve_butler_project_v2/clinic_lab_backend/accounts/r
+
+outing.py`: Defines WebSocket routing.
+     - `steve_butler_project_v2/clinic_lab_backend/accounts/consumers.py`: Defines the WebSocket consumer for handling notifications.
+   - **Order Notification Trigger**:
+     - `steve_butler_project_v2/clinic_lab_backend/accounts/serializers.py`: Updated to trigger WebSocket notifications when an order is updated.
+
+2. **Frontend (React)**:
+   - `steve_butler_project_v2/clinic_lab_frontend/src/components/Notifications.js`: Updated to listen for WebSocket events and display real-time notifications.
+
+---
+
+### **Step 6: Authentication and Authorization**
+
+In this step, we will ensure that only authenticated and authorized users can access and modify certain parts of the system. This involves configuring **JWT-based authentication** and implementing **role-based access control** (RBAC) to restrict actions for clinics and labs based on their roles.
+
+### **Step 6.1: Ensure JWT Authentication**
+
+We already configured **JWT-based authentication** in **Step 3** for the login and registration system. Here’s a quick recap of how it works:
+
+1. **JWT Token**: When users log in, they are issued an **access token** and a **refresh token**. The access token is sent with every request to the backend API for authentication.
+2. **JWT in React**: The token is stored in `localStorage` in the frontend, and every API request includes the token in the Authorization header.
+
+---
+
+### **Step 6.2: Role-Based Access Control (RBAC)**
+
+We need to ensure that certain actions are only available to **clinics** or **labs**. For example:
+- **Clinics**: Can create orders and view their own orders.
+- **Labs**: Can only update the status of orders that belong to them.
+
+#### **1. Update the User Model to Identify Roles**
+
+In **Step 2**, we extended the `User` model with a `Profile` that contains the `user_type` (clinic or lab). Now, we’ll use this field to enforce role-based permissions.
+
+---
+
+#### **2. Implement Role-Based Permissions in Django**
+
+To implement RBAC, we’ll create custom **permissions** in Django that check the user’s role before allowing certain actions.
+
+1. **Create Custom Permissions for Clinics and Labs**:
+   - In `accounts/permissions.py`, define two custom permissions: one for clinics and one for labs:
+     ```python
+     from rest_framework import permissions
+
+     class IsClinic(permissions.BasePermission):
+         def has_permission(self, request, view):
+             return request.user.is_authenticated and request.user.profile.user_type == 'clinic'
+
+     class IsLab(permissions.BasePermission):
+         def has_permission(self, request, view):
+             return request.user.is_authenticated and request.user.profile.user_type == 'lab'
+     ```
+
+   - These permissions check if the authenticated user is either a clinic or lab by verifying the `user_type` field in the user’s `Profile`.
+
+2. **Apply Permissions to Views**:
+   - We can now apply these permissions to views to restrict access based on the user’s role.
+
+   **Example: Restrict Order Creation to Clinics**:
+   - In `accounts/views.py`, modify the `OrderViewSet` to allow only clinics to create orders:
+     ```python
+     from rest_framework.permissions import IsAuthenticated
+     from .permissions import IsClinic, IsLab
+
+     class OrderViewSet(viewsets.ModelViewSet):
+         queryset = Order.objects.all()
+         serializer_class = OrderSerializer
+         permission_classes = [IsAuthenticated]
+
+         def get_permissions(self):
+             if self.action == 'create':
+                 # Only clinics can create orders
+                 self.permission_classes = [IsAuthenticated, IsClinic]
+             elif self.action in ['update', 'partial_update']:
+                 # Only labs can update order statuses
+                 self.permission_classes = [IsAuthenticated, IsLab]
+             return super().get_permissions()
+
+         def perform_create(self, serializer):
+             serializer.save(clinic=self.request.user)  # Automatically assign clinic
+     ```
+
+3. **Enforce Ownership of Orders**:
+   - Ensure that clinics can only see their own orders and labs can only update orders they are processing. We can do this by modifying the `get_queryset()` method in the view.
+
+   **Restrict Clinics to View Their Own Orders**:
+   ```python
+   class OrderViewSet(viewsets.ModelViewSet):
+       queryset = Order.objects.all()
+       serializer_class = OrderSerializer
+       permission_classes = [IsAuthenticated]
+
+       def get_queryset(self):
+           # If the user is a clinic, return only their orders
+           if self.request.user.profile.user_type == 'clinic':
+               return Order.objects.filter(clinic=self.request.user)
+           # If the user is a lab, return orders they are processing
+           if self.request.user.profile.user_type == 'lab':
+               return Order.objects.filter(lab=self.request.user)
+           return Order.objects.none()  # No orders if user role is unknown
+   ```
+
+---
+
+### **Step 6.3: Secure the API Endpoints**
+
+We will secure the entire API by ensuring that only authenticated users can access it and that the right permissions are enforced.
+
+1. **Configure Global Authentication and Permissions**:
+   - In `clinic_lab_backend/settings.py`, ensure that all API endpoints require authentication by default:
+     ```python
+     REST_FRAMEWORK = {
+         'DEFAULT_AUTHENTICATION_CLASSES': [
+             'rest_framework_simplejwt.authentication.JWTAuthentication',
+         ],
+         'DEFAULT_PERMISSION_CLASSES': [
+             'rest_framework.permissions.IsAuthenticated',
+         ],
+     }
+     ```
+
+2. **Protect Sensitive Endpoints**:
+   - Sensitive endpoints such as creating, modifying, or deleting orders should only be accessible to the appropriate users (clinics or labs).
+   - By applying custom permissions as shown above, we ensure that only authorized users can perform these actions.
+
+---
+
+### **Step 6.4: Frontend Role-Based Access Control**
+
+Now that we’ve secured the backend, we should also ensure that the frontend hides or disables options based on the user’s role.
+
+1. **Store the User Role in the Frontend**:
+   - When a user logs in, the frontend should fetch and store the user’s role so that the UI can adapt to the user’s permissions.
+   
+2. **Update the Login Component**:
+   - Modify the `Login` component to fetch the user profile after login and store the `user_type` in the frontend:
+     ```javascript
+     const handleLogin = async (e) => {
+         e.preventDefault();
+         try {
+             const response = await axios.post('http://localhost:8000/api/auth/login/', {
+                 username,
+                 password,
+             });
+             localStorage.setItem('access_token', response.data.access);
+             localStorage.setItem('refresh_token', response.data.refresh);
+
+             // Fetch user profile after login
+             const profileResponse = await axios.get('http://localhost:8000/api/auth/profile/', {
+                 headers: {
+                     Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+                 },
+             });
+             localStorage.setItem('user_type', profileResponse.data.user_type);
+
+             history.push('/dashboard');
+         } catch (error) {
+             console.error('Login failed', error);
+         }
+     };
+     ```
+
+3. **Conditional Rendering Based on User Role**:
+   - Use conditional rendering in components to hide certain actions based on the user’s role.
+
+   **Example: Show Order Creation Only to Clinics**:
+   ```javascript
+   const userType = localStorage.getItem('user_type');
+
+   return (
+       <div>
+           <h2>Order Dashboard</h2>
+           {userType === 'clinic' && (
+               <button onClick={() => history.push('/orders/new')}>Create New Order</button>
+           )}
+           {/* Display orders */}
+       </div>
+   );
+   ```
+
+---
+
+### **Step 6.5: Test Role-Based Access Control**
+
+1. **Create Different User Accounts**:
+   - Create a **clinic** account and a **lab** account using the registration endpoint or the Django admin.
+   
+2. **Test the API and Frontend**:
+   - **Clinics**: Should be able to create and view only their own orders.
+   - **Labs**: Should be able to view the orders they are assigned to process and update their statuses.
+   - Ensure that unauthorized actions are correctly restricted (e.g., clinics should not be able to update order statuses).
+
+---
+
+### **Files Created/Modified in Step 6**:
+
+1. **Backend (Django)**:
+   - `steve_butler_project_v2/clinic_lab_backend/accounts/permissions.py`: Contains custom permissions for clinics and labs.
+   - `steve_butler_project_v2/clinic_lab_backend/accounts/views.py`: Modified to enforce role-based permissions in the `OrderViewSet`.
+   - `steve_butler_project_v2/clinic_lab_backend/settings.py`: Global authentication and permission settings to require JWT and authenticated access by default.
+
+2. **Frontend (React)**:
+   - `steve_butler_project_v2/clinic_lab_frontend/src/components/Login.js`: Updated to fetch and store the user’s role after login.
+   - **Role-based Conditional Rendering**: Applied in relevant components like the dashboard to control which actions users can see based on their role.
+
+---
+
+### **Step 7: Testing and Debugging**
+
+In this step, we will ensure that the system functions correctly by performing thorough testing and debugging. We'll use a combination of **unit tests** for the backend and **manual testing** for the frontend to ensure that the entire system works as expected.
+
+### **Step 7.1: Backend Unit Testing (Django)**
+
+Unit tests are essential for verifying that individual components of the system work correctly, especially for the backend logic.
+
+1. **Set Up Testing in Django**:
+   Django comes with a built-in testing framework that is based on Python’s **unittest**. We’ll use this to test the **models**, **views**, and **permissions** in our system.
+
+2. **Create Tests for Models**:
+   - In `accounts/tests.py`, write tests for the `Order` and `Notification` models:
+     ```python
+     from django.test import TestCase
+     from django.contrib.auth.models import User
+     from .models import Order, Notification
+
+     class OrderModelTest(TestCase):
+         def setUp(self):
+             self.clinic_user = User.objects.create_user(username='clinic_user', password='pass')
+             self.lab_user = User.objects.create_user(username='lab_user', password='pass')
+             self.order = Order.objects.create(
+                 clinic=self.clinic_user, 
+                 lab=self.lab_user, 
+                 status='submitted', 
+                 delivery_method='email'
+             )
+
+         def test_order_creation(self):
+             self.assertEqual(self.order.clinic.username, 'clinic_user')
+             self.assertEqual(self.order.lab.username, 'lab_user')
+             self.assertEqual(self.order.status, 'submitted')
+             self.assertEqual(self.order.delivery_method, 'email')
+
+     class NotificationModelTest(TestCase):
+         def setUp(self):
+             self.user = User.objects.create_user(username='user', password='pass')
+             self.notification = Notification.objects.create(
+                 recipient=self.user, 
+                 message='Order updated'
+             )
+
+         def test_notification_creation(self):
+             self.assertEqual(self.notification.recipient.username, 'user')
+             self.assertEqual(self.notification.message, 'Order updated')
+     ```
+
+3. **Create Tests for Views and Permissions**:
+   - We’ll also test that the views and permissions are working as expected, particularly for creating orders and ensuring clinics and labs can only access what they are permitted.
+
+   **Test Order API**:
+   ```python
+   from rest_framework.test import APIClient
+   from django.urls import reverse
+
+   class OrderAPITest(TestCase):
+       def setUp(self):
+           self.client = APIClient()
+           self.clinic_user = User.objects.create_user(username='clinic_user', password='pass')
+           self.lab_user = User.objects.create_user(username='lab_user', password='pass')
+           self.client.login(username='clinic_user', password='pass')
+
+       def test_order_creation_by_clinic(self):
+           response = self.client.post(reverse('order-list'), {
+               'lab': self.lab_user.id,
+               'delivery_method': 'email',
+               'notes': 'Urgent order',
+           })
+           self.assertEqual(response.status_code, 201)
+           self.assertEqual(Order.objects.count(), 1)
+           self.assertEqual(Order.objects.first().notes, 'Urgent order')
+   ```
+
+4. **Run the Tests**:
+   - To run the tests, use Django’s built-in test runner:
+     ```bash
+     python manage.py test
+     ```
+
+---
+
+### **Step 7.2: Manual Testing (Frontend)**
+
+Manual testing is essential for ensuring that the user interface behaves correctly and that the interactions between the frontend and backend are smooth.
+
+#### **1. Test Authentication and Authorization**:
+
+1. **Login/Registration**:
+   - Visit the login page at `http://localhost:3000/login` and test the following:
+     - Register new users (clinics and labs).
+     - Log in as a clinic user and a lab user to ensure both workflows are functioning.
+     - Confirm that the correct JWT tokens are being stored in `localStorage` and that they are included in the API requests.
+
+2. **Unauthorized Access**:
+   - Try accessing the dashboard without logging in to ensure the system redirects you to the login page.
+   - Log in as a clinic and attempt to access a lab-only feature (e.g., updating order status) to ensure it’s restricted.
+
+#### **2. Test Order Management**:
+
+1. **Order Creation (Clinics)**:
+   - Log in as a clinic user and create a new order.
+   - Ensure the order appears in the order dashboard and that it’s created with the correct details.
+   
+2. **Order Modification (Labs)**:
+   - Log in as a lab user and update the status of an order.
+   - Ensure the clinic receives the update (either through real-time notifications or when refreshing the dashboard).
+
+#### **3. Test Notifications**:
+
+1. **Real-Time Notifications**:
+   - Log in as a clinic and keep the notifications page open.
+   - As a lab, update the status of an order and confirm that the clinic receives the notification in real-time via WebSocket.
+   
+2. **Manual Refresh**:
+   - Refresh the page and confirm that the notifications still persist in the dashboard, ensuring that notifications are properly stored in the backend and retrieved by the frontend.
+
+#### **4. UI/UX Testing**:
+
+1. **Mobile Responsiveness**:
+   - Test the frontend on different screen sizes (mobile, tablet, desktop) to ensure the layout adjusts correctly.
+   
+2. **Error Handling**:
+   - Trigger common errors such as invalid login credentials, missing fields in order creation, and unauthorized access to ensure that appropriate error messages are displayed.
+
+---
+
+### **Step 7.3: Debugging**
+
+During the testing process, you may encounter issues. Here are some common debugging steps:
+
+1. **Backend Debugging**:
+   - Use Django’s **debug toolbar** or enable **DEBUG = True** in `settings.py` to view detailed error messages.
+   - Check for errors in the terminal where Django is running.
+
+2. **Frontend Debugging**:
+   - Use the browser’s **developer tools** to inspect the network requests, check for console errors, and verify that data is being sent and received correctly between the frontend and backend.
+   - Look for issues such as missing authorization headers, incorrect API routes, or unexpected behavior in the React components.
+
+3. **Common Issues**:
+   - **CORS Issues**: Ensure that Django’s **CORS** settings are configured correctly to allow requests from the React frontend.
+     ```bash
+     pip install django-cors-headers
+     ```
+     Add `'corsheaders'` to `INSTALLED_APPS` and configure allowed origins in `settings.py`:
+     ```python
+     CORS_ALLOWED_ORIGINS = [
+         "http://localhost:3000",
+     ]
+     ```
+
+   - **Token Expiry**: Ensure that the JWT refresh token mechanism works correctly, so users can obtain a new access token when the old one expires.
+
+---
+
+### **Step 7.4: Performance Testing (Optional)**
+
+If your project requires handling a large number of users or orders, you may want to perform **load testing** to check for scalability issues.
+
+1. **Load Testing Tools**:
+   - Use tools like **Apache JMeter** or **Locust** to simulate high loads and test the system’s performance under stress.
+
+2. **Monitoring**:
+   - Set up performance monitoring tools like **Sentry** or **New Relic** to track errors, performance bottlenecks, and uptime during production.
+
+---
+
+### **Files Created/Modified in Step 7**:
+
+1. **Backend (Django)**:
+   - `steve_butler_project_v2/clinic_lab_backend/accounts/tests.py`: Contains unit tests for the models and API endpoints.
+   - **CORS Configuration (if necessary)**:
+     - `steve_butler_project_v2/clinic_lab_backend/settings.py`: Added CORS headers to allow frontend API access.
+
+---
+
+### **Step 8: Deployment**
+
+In this step, we will deploy the **Clinic-Lab Order Management System** to a production environment. We’ll deploy the **Django backend** (with PostgreSQL) and the **React frontend** to cloud hosting services.
+
+### **Step 8.1: Backend Deployment (Django + PostgreSQL)**
+
+We’ll deploy the Django backend using **Heroku**, which provides a free plan for small projects and easy integration with PostgreSQL.
+
+#### **1. Set Up a Heroku Account**
+- Sign up for a free account at [Heroku](https://www.heroku.com/).
+
+#### **2. Install the Heroku CLI**
+- Install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) on your machine:
+  ```bash
+  curl https://cli-assets.heroku.com/install.sh | sh
+  ```
+
+#### **3. Prepare the Django Backend for Deployment**
+
+1. **Install Gunicorn**:
+   - Gunicorn is a WSGI HTTP server that will run your Django app on Heroku.
+   ```bash
+   pip install gunicorn
+   ```
+
+2. **Update `requirements.txt`**:
+   - Ensure that your `requirements.txt` file includes all the necessary packages, including **Gunicorn**, **psycopg2** (for PostgreSQL), and **Django Channels**.
+   ```bash
+   pip freeze > requirements.txt
+   ```
+
+3. **Create a `Procfile`**:
+   - In the root of your Django project (`clinic_lab_backend`), create a file named `Procfile` to tell Heroku how to run the app.
+   ```bash
+   echo "web: gunicorn clinic_lab_backend.wsgi" > Procfile
+   ```
+
+4. **Update `settings.py` for Production**:
+   - In `clinic_lab_backend/settings.py`, update the following:
+   
+   - **Allowed Hosts**:
+     ```python
+     ALLOWED_HOSTS = ['your-heroku-app-name.herokuapp.com']
+     ```
+
+   - **Static Files**:
+     Add these settings at the end of the file to serve static files on Heroku:
+     ```python
+     STATIC_ROOT = BASE_DIR / 'staticfiles'
+     STATIC_URL = '/static/'
+     ```
+
+   - **Security Settings** (Important):
+     Ensure you turn off `DEBUG` and configure security settings for production:
+     ```python
+     DEBUG = False
+     ```
+     Use **django-environ** to load environment variables from Heroku (for secret keys, database URLs, etc.):
+     ```bash
+     pip install django-environ
+     ```
+
+     Then, update `settings.py` to use environment variables:
+     ```python
+     import environ
+     env = environ.Env()
+     environ.Env.read_env()
+
+     SECRET_KEY = env('SECRET_KEY')
+     ```
+
+5. **Configure PostgreSQL for Production**:
+   - Heroku provides a PostgreSQL add-on. Update the database settings in `settings.py` to use the environment variable provided by Heroku:
+   ```python
+   import dj_database_url
+   DATABASES = {
+       'default': dj_database_url.config(conn_max_age=600)
+   }
+   ```
+
+6. **Set Up Redis for Django Channels**:
+   - If you’re using Django Channels for real-time notifications, add the **Heroku Redis add-on** and update the Channels settings:
+     ```python
+     CHANNEL_LAYERS = {
+         'default': {
+             'BACKEND': 'channels_redis.core.RedisChannelLayer',
+             'CONFIG': {
+                 'hosts': [env('REDIS_URL')],
+             },
+         },
+     }
+     ```
+
+#### **4. Deploy the Django Backend to Heroku**
+
+1. **Create a Heroku App**:
+   - Run the following commands to create a new app on Heroku:
+     ```bash
+     heroku login
+     heroku create your-heroku-app-name
+     ```
+
+2. **Add PostgreSQL to Your App**:
+   - Add the **PostgreSQL** add-on to your app:
+     ```bash
+     heroku addons:create heroku-postgresql:hobby-dev
+     ```
+
+3. **Add Redis (if using Django Channels)**:
+   - Add the **Heroku Redis** add-on:
+     ```bash
+     heroku addons:create heroku-redis:hobby-dev
+     ```
+
+4. **Push the Code to Heroku**:
+   - Initialize Git in your project if it’s not already set up:
+     ```bash
+     git init
+     git add .
+     git commit -m "Initial commit for Heroku deployment"
+     ```
+   - Add the Heroku remote and push your code:
+     ```bash
+     heroku git:remote -a your-heroku-app-name
+     git push heroku master
+     ```
+
+5. **Run Migrations and Create a Superuser**:
+   - Once the code is deployed, run migrations and create a superuser:
+     ```bash
+     heroku run python manage.py migrate
+     heroku run python manage.py createsuperuser
+     ```
+
+6. **Collect Static Files**:
+   - Collect static files for Heroku to serve:
+     ```bash
+     heroku run python manage.py collectstatic
+     ```
+
+Your Django backend should now be live on Heroku!
+
+---
+
+### **Step 8.2: Frontend Deployment (React)**
+
+We’ll deploy the React frontend using **Netlify**, a free platform for hosting static websites.
+
+#### **1. Set Up a Netlify Account**
+- Sign up for a free account at [Netlify](https://www.netlify.com/).
+
+#### **2. Prepare the React App for Production**
+
+1. **Build the Production Version of React**:
+   - In your `clinic_lab_frontend` directory, run the following command to create a production build:
+     ```bash
+     npm run build
+     ```
+   - This will generate a `build` folder containing the static files needed for deployment.
+
+2. **Update Axios Base URL**:
+   - Update your Axios configuration in the frontend to point to the deployed backend (the Heroku URL):
+     ```javascript
+     const api = axios.create({
+         baseURL: 'https://your-heroku-app-name.herokuapp.com/api',
+         headers: {
+             Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+         },
+     });
+     ```
+
+---
+
+#### **3. Deploy to Netlify**
+
+1. **Drag and Drop the Build Folder**:
+   - In the Netlify dashboard, click on **New Site from Git** or use **Drag & Drop** to deploy.
+   - Select the `build` folder that was created in the previous step.
+
+2. **Configure Environment Variables** (Optional):
+   - If your React app relies on environment variables, you can configure them in the **Netlify dashboard** under **Site Settings** -> **Build & Deploy** -> **Environment Variables**.
+
+3. **Connect Custom Domain (Optional)**:
+   - If you have a custom domain, you can connect it to your Netlify site under **Domain Settings**.
+
+Your React frontend should now be live on Netlify!
+
+---
+
+### **Step 8.3: Final Testing in Production**
+
+Once both the backend and frontend are deployed, perform the following tests:
+
+1. **Test the Frontend-Backend Integration**:
+   - Visit your Netlify site and test the following:
+     - User login and registration.
+     - Order creation and updates.
+     - Real-time notifications (if using Django Channels).
+
+2. **Test Security**:
+   - Ensure that all API requests are properly authenticated and authorized.
+   - Confirm that HTTPS is working for both the frontend (Netlify) and backend (Heroku).
+
+---
+
+### **Files Created/Modified in Step 8**:
+
+1. **Backend (Django)**:
+   - `steve_butler_project_v2/clinic_lab_backend/Procfile`: Tells Heroku how to run the app using Gunicorn.
+   - `steve_butler_project_v2/clinic_lab_backend/settings.py`: Updated for production with PostgreSQL, static file handling, and security settings.
+
+2. **Frontend (React)**:
+   - **Production Build**: Generated in the `build/` folder after running `npm run build`.
+
+---
+
+### **Step 9: Monitoring and Maintenance**
+
+In this step, we will set up tools and practices to monitor the **Clinic-Lab Order Management System** in production and ensure its ongoing maintenance. Proper monitoring helps detect issues early, while maintenance ensures the system stays up-to-date, secure, and reliable.
+
+### **Step 9.1: Set Up Monitoring for the Backend**
+
+We will implement monitoring tools to track errors, performance issues, and uptime for the Django backend.
+
+#### **1. Use Sentry for Error Monitoring**
+**Sentry** is a popular tool for tracking errors and performance issues in real-time. It integrates easily with Django.
+
+1. **Install Sentry SDK**:
+   - Install the Sentry SDK for Python:
+     ```bash
+     pip install sentry-sdk
+     ```
+
+2. **Integrate Sentry with Django**:
+   - In `clinic_lab_backend/settings.py`, add the following to initialize Sentry:
+     ```python
+     import sentry_sdk
+     from sentry_sdk.integrations.django import DjangoIntegration
+
+     sentry_sdk.init(
+         dsn="YOUR_SENTRY_DSN",  # Get this from your Sentry dashboard
+         integrations=[DjangoIntegration()],
+         traces_sample_rate=1.0,  # Adjust depending on how much data you want to capture
+         send_default_pii=True,  # This will include user data in error reports
+     )
+     ```
+
+3. **Test Error Monitoring**:
+   - To test Sentry, you can trigger an error in the code (e.g., raise an exception), and Sentry will log it in the dashboard.
+
+#### **2. Monitor Performance with Heroku**
+
+**Heroku** provides basic performance monitoring tools. You can track the following metrics:
+
+- **Dyno Usage**: Ensure that your app has enough resources. If your app uses up too many dyno hours (for free plans), you might need to upgrade.
+- **Memory and CPU**: Heroku’s **Metrics tab** allows you to monitor CPU and memory usage.
+
+1. **Set Up Alerts for Dyno Usage**:
+   - You can configure **email alerts** for high dyno usage in the **Heroku dashboard** under your app’s settings.
+
+2. **Add Heroku Add-ons for Advanced Monitoring**:
+   - Consider adding third-party add-ons like **Scout APM** or **New Relic** for more advanced performance monitoring:
+     ```bash
+     heroku addons:create scoutapm:starter
+     ```
+
+#### **3. Uptime Monitoring**
+
+To ensure that your Django backend is always online and responsive, you can set up uptime monitoring.
+
+1. **Use UptimeRobot**:
+   - **UptimeRobot** is a free service that checks your app’s uptime at regular intervals. You can set it up to monitor your Heroku backend.
+   - Sign up at [UptimeRobot](https://uptimerobot.com/), add your Heroku app URL, and configure it to send email or SMS notifications if your app goes down.
+
+---
+
+### **Step 9.2: Set Up Monitoring for the Frontend**
+
+For the React frontend, we can also monitor performance and errors to ensure users have a smooth experience.
+
+#### **1. Use Sentry for Frontend Monitoring**
+
+You can use **Sentry** for tracking errors in the frontend as well.
+
+1. **Install Sentry for React**:
+   - In your `clinic_lab_frontend` directory, install the Sentry SDK for JavaScript:
+     ```bash
+     npm install @sentry/react @sentry/tracing
+     ```
+
+2. **Configure Sentry in React**:
+   - In `src/index.js`, initialize Sentry:
+     ```javascript
+     import * as Sentry from '@sentry/react';
+     import { Integrations } from '@sentry/tracing';
+
+     Sentry.init({
+         dsn: "YOUR_SENTRY_DSN",  // Get this from the Sentry dashboard
+         integrations: [new Integrations.BrowserTracing()],
+         tracesSampleRate: 1.0,
+     });
+     ```
+
+3. **Test Frontend Error Reporting**:
+   - Trigger an error in the React app (e.g., call an undefined function) to ensure it’s logged in Sentry.
+
+#### **2. Monitor Netlify for Uptime**
+
+Netlify provides built-in monitoring and logs for your deployed frontend:
+
+1. **Netlify Analytics**:
+   - Use **Netlify Analytics** to monitor site traffic, build times, and more.
+   - You can set up notifications for build failures or slow page load times.
+
+2. **Uptime Monitoring**:
+   - Add your Netlify URL to **UptimeRobot** or other uptime monitoring services to track the availability of your frontend.
+
+---
+
+### **Step 9.3: Security Maintenance**
+
+Maintaining security is crucial, especially for a system like this one that handles sensitive clinic and lab data.
+
+#### **1. Apply Security Updates Regularly**
+
+1. **Django Security Releases**:
+   - Regularly check for security updates for **Django**, and make sure to apply them immediately:
+     ```bash
+     pip install --upgrade django
+     ```
+
+2. **React Security Updates**:
+   - Similarly, check for **React** and npm package vulnerabilities. Run the following command to check for any security issues in your dependencies:
+     ```bash
+     npm audit
+     ```
+
+3. **Update Dependencies**:
+   - Always keep your dependencies up to date. For Python dependencies:
+     ```bash
+     pip install --upgrade -r requirements.txt
+     ```
+   - For npm dependencies:
+     ```bash
+     npm update
+     ```
+
+#### **2. Use HTTPS Everywhere**
+
+Ensure that both the frontend (Netlify) and backend (Heroku) are served over **HTTPS** to encrypt user data.
+
+1. **Heroku SSL**:
+   - Heroku automatically provides SSL for your app. Make sure HTTPS is enabled in your app settings.
+   
+2. **Netlify SSL**:
+   - Netlify also automatically provides SSL for your site. You can confirm this by visiting your site with `https://`.
+
+#### **3. Secure Environment Variables**
+
+1. **Heroku**:
+   - Use **Heroku Config Vars** to securely store environment variables like `SECRET_KEY`, `DATABASE_URL`, and API keys. You can manage these in the **Heroku dashboard** under your app’s settings.
+   
+2. **Netlify**:
+   - Use **Netlify Environment Variables** to securely manage API URLs and any other sensitive keys used in the React app.
+
+---
+
+### **Step 9.4: Regular Backups and Data Integrity**
+
+For a system handling important data (e.g., clinic orders and lab results), having regular backups is crucial.
+
+1. **Heroku PostgreSQL Backups**:
+   - Heroku provides daily backups of your PostgreSQL database with its **Hobby Tier** and above. You can check backup settings in the **Heroku dashboard** or trigger manual backups with:
+     ```bash
+     heroku pg:backups:capture
+     ```
+
+2. **Automate Backups**:
+   - Automate the backup process by scheduling regular backups and saving them to external storage (e.g., AWS S3).
+
+---
+
+### **Step 9.5: Maintenance Plan**
+
+Developing a maintenance plan helps ensure your system stays secure, up-to-date, and performant. Here’s a suggested maintenance plan:
+
+#### **1. Weekly**:
+- **Monitor Error Logs**: Review errors and performance issues in Sentry (both frontend and backend).
+- **Monitor Performance**: Check CPU, memory usage, and uptime in Heroku and Netlify.
+- **Review Uptime**: Ensure the system has been available without downtime (UptimeRobot or similar).
+
+#### **2. Monthly**:
+- **Apply Security Patches**: Check for any Django, React, or npm security updates and apply them.
+- **Database Optimization**: Run any necessary database maintenance tasks (e.g., vacuuming PostgreSQL) to keep it optimized.
+- **Review API and Frontend Usage**: Check analytics to see how your app is performing in production.
+
+#### **3. Quarterly**:
+- **Backups**: Ensure that your database backups are functional and that you can restore from them if needed.
+- **Feature Improvements**: Gather feedback from users to improve the system's performance and add new features as necessary.
+
+---
+
+### **Files Modified/Added in Step 9**:
+
+1. **Backend (Django)**:
+   - `clinic_lab_backend/settings.py`: Added **Sentry** configuration for error tracking.
+   - **Heroku/Netlify Configurations**: Managed via environment variables for secure storage of sensitive data.
+
+2. **Frontend (React)**:
+   - `src/index.js`: Added Sentry integration for tracking errors and performance issues.
+
+---
+
+
