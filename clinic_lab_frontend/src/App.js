@@ -1,6 +1,5 @@
 import React from 'react';
 import AppRouter from './AppRouter';
-import TestApiRequest from './components/TestApiRequest';
 import logo from './logo.svg';
 import './App.css';
 
