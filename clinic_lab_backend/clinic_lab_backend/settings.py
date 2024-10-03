@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!_s@v-a!y-+u+_0w6(@6rfwmpz1%-1!ezkllxdlx*sm38)$6&@'
+SECRET_KEY = 'django-insecure-f%)3*nwv7=qgi4s!do79r5cv)7#5gllnnr*425tw5jj#ppd^!4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -77,8 +77,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'clinic_lab_db',
-        'USER': 'postgres',  # Use the username you set during PostgreSQL installation (e.g., 'postgres')
-        'PASSWORD': 'whatismeaningoflife7208',  # Use the password you set during PostgreSQL installation
+        'USER': 'postgres',  
+        'PASSWORD': 'whatismeaningoflife7208',  
         'HOST': 'localhost',
         'PORT': '5050',
     }
