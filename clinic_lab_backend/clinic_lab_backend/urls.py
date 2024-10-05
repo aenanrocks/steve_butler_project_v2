@@ -15,13 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from accounts.views import RegisterView, OrderListCreateView, OrderDetailView, NotificationListView, NotificationDetailView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 from accounts.views import ProtectedRouteView
+from django.views.generic import RedirectView, TemplateView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,5 +36,8 @@ urlpatterns = [
     path('api/orders/<int:pk>/', OrderDetailView.as_view(), name='order-detail'),
     path('api/notifications/', NotificationListView.as_view(), name='notification-list'),
     path('api/notifications/<int:pk>/', NotificationDetailView.as_view(), name='notification-detail'),
-
+    
+    # Serve the React frontend for all other routes
+    path('dashboard/', TemplateView.as_view(template_name='index.html')),
+    path('', TemplateView.as_view(template_name='index.html')),
 ]
