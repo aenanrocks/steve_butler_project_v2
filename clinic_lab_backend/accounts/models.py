@@ -40,8 +40,8 @@ class Order(models.Model):
         ('post', 'Post'),
     )
     
-    clinic = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
-    lab = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lab_orders')
+    clinic = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')  # The clinic making the order
+    lab = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lab_orders')  # The lab processing the order
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='submitted')
     delivery_method = models.CharField(max_length=10, choices=DELIVERY_CHOICES, default='email')
     notes = models.TextField(blank=True)
