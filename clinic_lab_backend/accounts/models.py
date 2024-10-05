@@ -6,6 +6,7 @@ from django.dispatch import receiver
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
+        from .models import Profile
         Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
@@ -17,7 +18,7 @@ class Profile(models.Model):
         ('clinic', 'Clinic'),
         ('lab', 'Lab'),
     )
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
 
     def __str__(self):
