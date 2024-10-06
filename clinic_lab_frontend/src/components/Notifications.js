@@ -5,6 +5,7 @@ const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
+        // Fetch notifications from the backend
         const fetchNotifications = async () => {
             try {
                 const response = await axios.get('http://localhost:8000/api/notifications/', {
@@ -18,15 +19,30 @@ const Notifications = () => {
             }
         };
         fetchNotifications();
+
+        // Connect to WebSocket for real-time notifications
+        const socket = new WebSocket('ws://localhost:8000/ws/notifications/');
+
+        // Listen for messages from WebSocket
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            setNotifications((prevNotifications) => [
+                ...prevNotifications,
+                { message: data.message, created_at: new Date().toLocaleString() },
+            ]);
+        };
+
+        // Clean up WebSocket connection on component unmount
+        return () => socket.close();
     }, []);
 
     return (
         <div>
             <h2>Notifications</h2>
             <ul>
-                {notifications.map((notification) => (
-                    <li key={notification.id}>
-                        {notification.message} - {new Date(notification.created_at).toLocaleString()}
+                {notifications.map((notification, index) => (
+                    <li key={index}>
+                        {notification.message} - {notification.created_at}
                     </li>
                 ))}
             </ul>
